@@ -21,7 +21,7 @@ async def fetch(session, url):
 
 async def get_futures_data(session, symbol, interval='1m'):
     url = (f"https://fapi.binance.com/fapi/v1/klines?symbol={symbol}&"
-           f"interval={interval}&limit=10")
+           f"interval={interval}&limit=5")
     response = await fetch(session, url)
     return response
 
@@ -42,7 +42,7 @@ def get_futures():
 
 async def main():
     symbols = get_futures()
-    interval = '5m'
+    interval = '3m'
     tasks = []
 
     async with aiohttp.ClientSession() as session:
@@ -57,12 +57,11 @@ async def main():
             tree = ast.parse(response, mode='eval')
             # Извлечение значения из AST и преобразование его в список
             result = ast.literal_eval(tree.body)
-
+            # print(result)
             start_price = float(result[0][1])  # цена открытия первой свечи
             end_price = float(result[-1][4])  # цена закрытия последней свечи
             # Вычисление процента
             price_change_percent = 1 - (end_price/start_price)
-
             if abs(price_change_percent) >= float(0.05):
                 print(symbols[i])
                 message = (f"https://www.binance.com/en/futures/{symbols[i]}\n"
@@ -77,6 +76,3 @@ def send_message(message):
         'text': message
     }
     requests.get(url_send, params=params)
-
-
-asyncio.run(main())

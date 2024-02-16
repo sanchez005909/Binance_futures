@@ -8,8 +8,8 @@ def my_func():
     asyncio.run(main())
 
 
-# Запуск функции каждые 5 минут
-schedule.every(5).minutes.do(my_func)
+# Запуск функции каждую минуту
+schedule.every(1).minutes.do(my_func)
 
 
 while True:
